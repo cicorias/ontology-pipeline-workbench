@@ -1,0 +1,23 @@
+{
+  "name": "ontology-pipeline-workbench",
+  "version": "1.0.0",
+  "description": "Local, offline workbench for the six-stage ontology pipeline: vocabulary, metadata profile, taxonomy, thesaurus, ontology, knowledge graph.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test/smoke.mjs"
+  },
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "d3": "^7.9.0",
+    "n3": "^2.7.12",
+    "oxigraph": "^0.5.11",
+    "rdf-validate-shacl": "^0.6.5"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  },
+  "private": true
+}

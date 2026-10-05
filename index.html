@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ontology Workbench</title>
+  <meta name="description" content="A local workbench for the six stages of building a knowledge graph: controlled vocabulary, metadata profile, taxonomy, thesaurus, ontology and knowledge graph.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='8' cy='8' r='5' fill='%23335c99'/%3E%3Ccircle cx='24' cy='10' r='5' fill='%2339876b'/%3E%3Ccircle cx='15' cy='24' r='5' fill='%23c4682f'/%3E%3Cpath d='M8 8L24 10L15 24Z' fill='none' stroke='%23556' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo" aria-hidden="true"></span><div><b>Ontology Workbench</b><small>vocabulary → profile → taxonomy → thesaurus → ontology → graph</small></div></div>
+    <div class="top-actions">
+      <span id="saved" class="saved">saved</span>
+      <select id="projectPick" aria-label="Project"></select>
+      <details class="menu" id="projectMenu">
+        <summary>Project ▾</summary>
+        <div class="menu-list">
+          <button data-act="newProject">New empty project</button>
+          <button data-act="loadExample">Load the example (fresh copy)</button>
+          <button data-act="renameProject">Rename this project</button>
+          <button data-act="exportProject">Export project as JSON</button>
+          <label class="btnlike">Import project JSON<input type="file" id="importProject" accept=".json,application/json" hidden></label>
+          <button data-act="deleteProject" class="danger">Delete this project</button>
+        </div>
+      </details>
+    </div>
+  </header>
+  <nav id="nav" class="stages"></nav>
+  <main id="main" class="work"></main>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
