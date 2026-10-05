@@ -10,6 +10,9 @@ const COLORS = { Scheme: '#26364d', Concept: '#4f7cc0', Collection: '#39876b', O
 
 let sim = null
 
+// the page re-renders on every change; a simulation for an SVG no longer on screen must not keep running
+export function stopGraph() { if (sim) { sim.stop(); sim = null } }
+
 export function drawGraph(svgEl, infoEl, quads, opts) {
   const { bases, compact, layers, focus, edgeLabels } = opts
   const layerOf = (iri) => iri.startsWith(bases.data) ? 'abox' : iri.startsWith(bases.concept) ? 'cbox' : iri.startsWith(bases.schema) || iri === bases.schema.replace(/[#/]$/, '') ? 'tbox' : 'ext'
@@ -112,13 +115,16 @@ export function drawGraph(svgEl, infoEl, quads, opts) {
     node.attr('transform', (d) => `translate(${d.x},${d.y})`)
   })
   const fit = () => {
+    if (!svgEl.isConnected) return
     const xs = nodes.map((n) => n.x), ys = nodes.map((n) => n.y)
     if (xs.some((x) => !isFinite(x))) return
     const x0 = Math.min(...xs) - 40, x1 = Math.max(...xs) + 140, y0 = Math.min(...ys) - 30, y1 = Math.max(...ys) + 30
     const k = Math.min(W / (x1 - x0), H / (y1 - y0), 1.6)
     svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity.translate((W - k * (x0 + x1)) / 2, (H - k * (y0 + y1)) / 2).scale(k))
   }
+  // fit once the layout has mostly settled, and again when it stops
   sim.on('end', fit)
+  setTimeout(fit, 1200)
   node.call(d3.drag()
     .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
     .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y })

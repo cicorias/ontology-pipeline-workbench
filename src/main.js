@@ -6,7 +6,7 @@ import { buildQuads, shapeQuads, toTurtle, toNTriples, toJsonLd, prefixes, compa
 import { reason } from './reason.js'
 import { sparql, validateShacl, oxigraphReady } from './engine.js'
 import { runStage, needs, ancestors, descendants } from './checks.js'
-import { drawGraph } from './graph.js'
+import { drawGraph, stopGraph } from './graph.js'
 
 let db = loadDb()
 let st = ensureUi(db.projects[db.current])
@@ -47,7 +47,7 @@ const inp = (path, ph = '', extra = '') => `<input data-bind="${path}" value="${
 const area = (path, ph = '', extra = '') => `<textarea data-bind="${path}" placeholder="${esc(ph)}" ${extra}>${esc(getPath(st, path))}</textarea>`
 const listInp = (path, ph = 'separate entries with ;') => `<input data-list="${path}" value="${esc((getPath(st, path) || []).join('; '))}" placeholder="${esc(ph)}">`
 const select = (path, options, extra = '') => `<select data-bind="${path}" ${extra}>${options.map(([v, l]) => opt(v, l, getPath(st, path))).join('')}</select>`
-const check = (path, label, extra = '') => `<label class="check"><input type="checkbox" data-bind="${path}" ${getPath(st, path) ? 'checked' : ''} ${extra}> ${label}</label>`
+const check = (path, label, extra = '') => `<label class="check"><input type="checkbox" data-bind="${path}" ${getPath(st, path) ? 'checked' : ''} ${extra}> <span>${label}</span></label>`
 const btn = (act, label, arg = '', cls = 'sm') => `<button class="${cls}" data-act="${act}" data-arg="${esc(arg)}">${label}</button>`
 const val = (id) => (document.getElementById(id)?.value || '').trim()
 
@@ -265,8 +265,8 @@ function viewTaxonomy() {
   <div class="panel"><h3>Schemes and hierarchy</h3><div class="split"><div>
     <div class="adder" style="margin:0 0 8px"><input id="schemeNew" placeholder="New scheme, e.g. Product lines" data-enter="addScheme"><button class="sm" data-act="addScheme">Add scheme</button></div>
     ${tree('tax')}
-    <div style="margin-top:10px"><label>Approved, not yet placed</label><div class="chips">${unplaced.map((u) => `<span class="chip">${esc(termLabel(u))}<button data-act="place" data-arg="${u}" title="place in ${esc(st.schemes[sid]?.title || 'the first scheme')}">＋</button></span>`).join('') || '<span class="pill ok">all placed</span>'}</div>
-    <div class="muted">＋ places a term in the selected scheme (${esc(st.schemes[sid]?.title || Object.values(st.schemes)[0]?.title || 'none')}).</div></div>
+    <div style="margin-top:10px"><label>Approved, not yet placed</label><div class="chips">${unplaced.map((u) => `<span class="chip">${esc(termLabel(u))}<button data-act="place" data-arg="${u}" title="place in ${esc(st.schemes[sid]?.title || 'the first scheme')}">+</button></span>`).join('') || '<span class="pill ok">all placed</span>'}</div>
+    <div class="muted">+ places a term in the selected scheme (${esc(st.schemes[sid]?.title || Object.values(st.schemes)[0]?.title || 'none')}).</div></div>
   </div><div>${editor}</div></div></div>
   ${checklistPanel(3)}`
 }
@@ -532,7 +532,7 @@ function graphQuads() {
 }
 
 function afterKg() {
-  if (st.ui.view !== 'kg' || st.ui.kgTab !== 'graph') return
+  if (st.ui.view !== 'kg' || st.ui.kgTab !== 'graph') { stopGraph(); return }
   const svg = $('#gSvg'); if (!svg) return
   svg.style.height = Math.max(420, Math.min(900, window.innerHeight - 260)) + 'px'
   const r = drawGraph(svg, $('#gInfo'), graphQuads(), {

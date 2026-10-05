@@ -11,6 +11,8 @@ A local, offline workbench for building a knowledge graph in six stages:
 
 All work is saved in your browser's localStorage. Export the RDF (Turtle, N-Triples, JSON-LD), the vocabulary as CSV, or the whole project as JSON.
 
+A step-by-step guide with screenshots is in [docs/HOWTO.md](docs/HOWTO.md).
+
 ## Run it
 
 ```bash
